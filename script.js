@@ -7,8 +7,13 @@
    ========================================================== */
 
 // ---------- Settings ----------
+// Deployed FastAPI backend on Render. For local testing, switch to:
+// "http://127.0.0.1:8000/predict"
 const API_URL = "https://mindly-3s4u.onrender.com/predict";
-const REQUEST_TIMEOUT_MS = 15000;
+
+// Render's free tier sleeps when idle, so the first request can take
+// up to a minute while the server wakes up.
+const REQUEST_TIMEOUT_MS = 60000;
 
 // The ring is only a visual guide. It is filled as (score / SCORE_SCALE_MAX).
 // This is NOT a score range from the backend: set it to match your model's
@@ -268,6 +273,10 @@ form.addEventListener("submit", async (event) => {
 
   // 2. Ask the API
   setLoading(true);
+  // If the server is asleep, tell the user why it's taking a while
+  const slowTimer = setTimeout(() => {
+    submitLabel.textContent = "Waking up the server…";
+  }, 5000);
   try {
     const score = await requestPrediction(buildPayload());
     showResult(score);
@@ -287,6 +296,7 @@ form.addEventListener("submit", async (event) => {
       showAlert(prefix, error.details);
     }
   } finally {
+    clearTimeout(slowTimer);
     setLoading(false);
   }
 });
