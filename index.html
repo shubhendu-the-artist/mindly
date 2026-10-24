@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Mental Health Score Predictor</title>
+
+  <!-- Fonts: if you're offline, the system fallbacks in style.css are used -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Soft background shapes (decorative only) -->
+  <div class="blob blob-lavender" aria-hidden="true"></div>
+  <div class="blob blob-mint" aria-hidden="true"></div>
+  <div class="blob blob-peach" aria-hidden="true"></div>
+
+  <header class="hero">
+    <p class="pill">About 2 minutes</p>
+    <h1>Check in on your student habits</h1>
+    <p class="hero-sub">
+      Answer 12 short questions about your day. A trained model will return an
+      estimated mental health score based on your answers.
+    </p>
+  </header>
+
+  <div class="layout">
+    <!-- ================= FORM ================= -->
+    <form id="predict-form" class="form-col" novalidate>
+
+      <!-- Section 1: Personal details -->
+      <fieldset class="card accent-lavender">
+        <legend>
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+          </span>
+          Personal details
+        </legend>
+
+        <div class="grid">
+          <div class="field">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" min="10" max="100" step="1" inputmode="numeric" placeholder="e.g. 20">
+            <small class="error" data-error-for="age"></small>
+          </div>
+
+          <div class="field">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option value="" disabled selected>Choose one</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+            <small class="error" data-error-for="gender"></small>
+          </div>
+
+          <div class="field">
+            <label for="country">Country</label>
+            <select id="country" name="country">
+              <option value="" disabled selected>Choose one</option>
+              <option>India</option>
+              <option>USA</option>
+              <option>UK</option>
+              <option>Canada</option>
+              <option>Australia</option>
+              <option>Germany</option>
+              <option>France</option>
+              <option>Mexico</option>
+              <option>Turkey</option>
+              <option>Other</option>
+            </select>
+            <small class="error" data-error-for="country"></small>
+          </div>
+
+          <div class="field">
+            <label for="academic_level">Academic level</label>
+            <select id="academic_level" name="academic_level">
+              <option value="" disabled selected>Choose one</option>
+              <option>High School</option>
+              <option>Undergraduate</option>
+              <option>Graduate</option>
+            </select>
+            <small class="error" data-error-for="academic_level"></small>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Section 2: Social media habits -->
+      <fieldset class="card accent-sky">
+        <legend>
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
+          </span>
+          Social media habits
+        </legend>
+
+        <div class="grid">
+          <div class="field">
+            <label for="most_used_platform">Most used platform</label>
+            <select id="most_used_platform" name="most_used_platform">
+              <option value="" disabled selected>Choose one</option>
+              <option>Facebook</option>
+              <option>Instagram</option>
+              <option>KakaoTalk</option>
+              <option>LINE</option>
+              <option>LinkedIn</option>
+              <option>Snapchat</option>
+              <option>TikTok</option>
+              <option>Twitter</option>
+              <option>VKontakte</option>
+              <option>WeChat</option>
+              <option>WhatsApp</option>
+              <option>YouTube</option>
+            </select>
+            <small class="error" data-error-for="most_used_platform"></small>
+          </div>
+
+          <div class="field">
+            <label for="purpose_of_use">Main purpose of use</label>
+            <select id="purpose_of_use" name="purpose_of_use">
+              <option value="" disabled selected>Choose one</option>
+              <option>Education</option>
+              <option>Entertainment</option>
+              <option>Networking</option>
+              <option>News</option>
+            </select>
+            <small class="error" data-error-for="purpose_of_use"></small>
+          </div>
+
+          <div class="field field-wide">
+            <div class="slider-head">
+              <label for="avg_daily_usage_hours">Average daily usage</label>
+              <output id="avg_daily_usage_hours-out" for="avg_daily_usage_hours">4 h</output>
+            </div>
+            <input type="range" id="avg_daily_usage_hours" name="avg_daily_usage_hours" min="0" max="24" step="0.5" value="4" data-slider>
+            <small class="error" data-error-for="avg_daily_usage_hours"></small>
+          </div>
+
+          <div class="field field-wide">
+            <label for="daily_unlocks">Phone unlocks per day</label>
+            <input type="number" id="daily_unlocks" name="daily_unlocks" min="0" step="1" inputmode="numeric" placeholder="e.g. 60">
+            <small class="error" data-error-for="daily_unlocks"></small>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Section 3: Lifestyle & wellbeing -->
+      <fieldset class="card accent-mint">
+        <legend>
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+          </span>
+          Lifestyle &amp; wellbeing
+        </legend>
+
+        <div class="grid">
+          <div class="field field-wide">
+            <div class="slider-head">
+              <label for="study_hours">Study hours per day</label>
+              <output id="study_hours-out" for="study_hours">4 h</output>
+            </div>
+            <input type="range" id="study_hours" name="study_hours" min="0" max="24" step="0.5" value="4" data-slider>
+            <small class="error" data-error-for="study_hours"></small>
+          </div>
+
+          <div class="field field-wide">
+            <div class="slider-head">
+              <label for="physical_activity_hours">Physical activity per day</label>
+              <output id="physical_activity_hours-out" for="physical_activity_hours">1 h</output>
+            </div>
+            <input type="range" id="physical_activity_hours" name="physical_activity_hours" min="0" max="24" step="0.5" value="1" data-slider>
+            <small class="error" data-error-for="physical_activity_hours"></small>
+          </div>
+
+          <div class="field field-wide">
+            <div class="slider-head">
+              <label for="sleep_hours_per_night">Sleep per night</label>
+              <output id="sleep_hours_per_night-out" for="sleep_hours_per_night">7 h</output>
+            </div>
+            <input type="range" id="sleep_hours_per_night" name="sleep_hours_per_night" min="0" max="24" step="0.5" value="7" data-slider>
+            <small class="error" data-error-for="sleep_hours_per_night"></small>
+          </div>
+
+          <div class="field field-wide">
+            <label for="stress_level">Current stress level</label>
+            <select id="stress_level" name="stress_level">
+              <option value="" disabled selected>Choose one</option>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Very High</option>
+            </select>
+            <small class="error" data-error-for="stress_level"></small>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+
+    <!-- ================= SIDE PANEL ================= -->
+    <aside class="panel card" aria-label="Progress and result">
+      <div class="progress">
+        <div class="progress-top">
+          <span>Questions answered</span>
+          <span id="progress-text">0 of 12</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="Form progress" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" id="progress-track">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- The submit button lives outside the <form>, linked with the form attribute -->
+      <button type="submit" form="predict-form" id="submit-btn" class="btn-primary">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-label">Predict My Score</span>
+      </button>
+      <button type="button" id="reset-btn" class="btn-ghost">Reset form</button>
+
+      <!-- Errors from validation or the API appear here -->
+      <div id="form-alert" class="alert" role="alert" hidden></div>
+
+      <!-- Result area -->
+      <div class="result-wrap" aria-live="polite">
+        <p id="empty-state" class="empty">
+          Fill in the form, then choose Predict My Score. Your result will appear here.
+        </p>
+
+        <section id="result-card" class="result" hidden>
+          <div class="ring">
+            <svg viewBox="0 0 140 140" aria-hidden="true">
+              <defs>
+                <linearGradient id="ring-gradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#8f7be6"/>
+                  <stop offset="1" stop-color="#5bc9a6"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-track" cx="70" cy="70" r="58"/>
+              <circle class="ring-fill" id="ring-fill" cx="70" cy="70" r="58" transform="rotate(-90 70 70)"/>
+            </svg>
+            <div class="ring-center">
+              <span id="score-value" class="score-value">0.00</span>
+              <span class="ring-label">predicted score</span>
+            </div>
+          </div>
+
+          <p class="result-note">
+            This number is the model's estimate based on the answers you entered.
+            It reflects patterns in the data the model was trained on, and it can't
+            describe your individual situation. The ring is a visual guide only.
+          </p>
+        </section>
+      </div>
+
+      <p class="support">
+        If you're worried about your mental health, please talk to a counsellor,
+        doctor, or someone you trust. Reaching out is a good step, whatever this score says.
+      </p>
+    </aside>
+  </div>
+
+  <footer class="footer">
+    <p>
+      This is an experimental prediction tool. It is not a clinical assessment or a diagnosis,
+      and it should not replace advice from a qualified health professional.
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
