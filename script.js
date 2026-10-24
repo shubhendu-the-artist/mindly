@@ -7,7 +7,7 @@
    ========================================================== */
 
 // ---------- Settings ----------
-const API_URL = "http://127.0.0.1:8000/predict";
+const API_URL = "https://mindly-3s4u.onrender.com/predict";
 const REQUEST_TIMEOUT_MS = 15000;
 
 // The ring is only a visual guide. It is filled as (score / SCORE_SCALE_MAX).
